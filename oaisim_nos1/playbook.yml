@@ -28,6 +28,7 @@
       with_items:
       - software-properties-common
       - libtasn1-3-dev
+
       - autoconf
       - automake
       - bison
@@ -98,55 +99,20 @@
 
     - import_tasks: asn1c.yml
 
-# STEP THREE: DOWNLOAD/BUILD UHD DRIVERS FROM SOURCE
-    - name: apt-get installs
-      apt:
-        name: "{{ item }}"
-      with_items:
-      - libboost-all-dev
-      - libusb-1.0-0-dev
-      - python-mako
-      - doxygen
-      - python-docutils
-      - python-requests
-      - cmake
-      - build-essential
-      become: yes
-
-    - name: fetch uhd source from github
-      git:
-        repo: https://github.com/EttusResearch/uhd.git
-        dest: /home/vagrant/uhd
-
-    - name: build/install uhd
-      shell: |
-        mkdir host/build
-        cd host/build
-        cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-        make
-        make install
-        ldconfig
-        /usr/lib/uhd/utils/uhd_images_downloader.py
-      args:
-        chdir: /home/vagrant/enb
-      become: yes
-
-
-# STEP FOUR: DOWNLOAD/BUILD THE SOURCE
+# STEP THREE: DOWNLOAD/BUILD THE SOURCE
     - name: fetch enb source from github
       git:
         repo: https://github.com/spencersevilla/dolte-enb.git
         dest: /home/vagrant/enb
 
-    - name: build ACTUAL enb (for USRP)
+    - name: build simulated enb (oaisim) (WITHOUT S1)
       shell: |
-        ./cmake_targets/build_oai -c -w USRP --eNB --UE
+        ./cmake_targets/build_oai -c --oaisim --noS1
       args:
         chdir: /home/vagrant/enb
 
-# STEP FIVE: INSTALL LOWLATENCY KERNEL?!?!?!?!?
+# STEP FOUR: ANY FINAL CONFIGS???
 
-# STEP SIX: ANY FINAL CONFIGS???
-
-# To run: sudo -E ./cmake_targets/lte_build_oai/build/lte-softmodem -O ./spencer_configs/enb.10MHz.b200
-
+# TO RUN:
+# source ./cmake_targets/tools/init_nas_nos1
+# sudo -E ./cmake_targets/tools/run_enb_ue_virt_noS1
