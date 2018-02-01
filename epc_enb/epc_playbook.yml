@@ -124,21 +124,30 @@
 ################################## EPC #####################################
 ############################################################################
 
-    - name: fetch dolte-epc from github (SMS NOTE, CHANGE THIS TO INCLUDE ENBRAINS EVENTUALLY!!!)
+    - name: fetch epc from github
       git:
-        repo: https://github.com/spencersevilla/dolte-epc.git
+        repo: https://github.com/spencersevilla/enbrains-epc.git
         dest: /home/vagrant/epc
 
-    - name: build dolte-epc
+    # - name: build epc
+    #   shell: |
+    #     source oaienv
+    #     ./scripts/build_hss
+    #     ./scripts/build_mme
+    #     ./scripts/build_spgw
+    #   args:
+    #     chdir: /home/vagrant/epc
+
+    - name: build epc with enbrains
       shell: |
         source oaienv
-        ./scripts/build_hss
-        ./scripts/build_mme
-        ./scripts/build_spgw
+        ./scripts/build_hss -e
+        ./scripts/build_mme -e
+        ./scripts/build_spgw -e
       args:
-        chdir: /home/vagrant/epc
+        chdir: /home/vagrant/epc        
 
-    - name: post-install config dolte-epc (TODO MAKE SYMLINKS!!!)
+    - name: post-install config
       shell: |
         source /home/vagrant/epc/oaienv
         mkdir -p /usr/local/etc/oai
