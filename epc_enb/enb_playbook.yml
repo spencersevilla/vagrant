@@ -118,8 +118,5 @@
       args:
         chdir: /home/vagrant/enb
 
-# STEP FOUR: COPY FINAL CONFIGS
-
-
 # TO RUN:
 # sudo -E ./cmake_targets/tools/run_enb_ue_virt_s1
