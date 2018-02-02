@@ -2,6 +2,4 @@ THIS system architecture assumes that we're provisioning an all-in-one EPC on a 
 
 System Configuration:
 - Fill out ALL fields in the "configuration" file with your site-specific values. This is important because these are all the things we need to know but can't automatically assume.
-- Download Ansible
-- Provision the EPC over Ansible
-- All in one script (once configuration is complete) can be done with configure.sh
+- All in one script (once configuration is complete) can be done with setup.sh. This script downloads/installs Ansible and Python, and then provisions the EPC.

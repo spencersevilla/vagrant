@@ -129,15 +129,6 @@
         repo: https://github.com/spencersevilla/enbrains-epc.git
         dest: /home/vagrant/epc
 
-    # - name: build epc
-    #   shell: |
-    #     source oaienv
-    #     ./scripts/build_hss
-    #     ./scripts/build_mme
-    #     ./scripts/build_spgw
-    #   args:
-    #     chdir: /home/vagrant/epc
-
     - name: build epc with enbrains
       shell: |
         source oaienv
@@ -157,9 +148,3 @@
         /home/vagrant/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
         /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 root research oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
       become: yes
-
-
-
-
-
-
