@@ -1,0 +1,13 @@
+This configuration assumes that you have a REAL machine running Ubuntu 14.04, and you want to set it up as a combination eNB/epc. The system architecture essentially runs the SDR/eNB software in the real OS and runs the EPC code in an Ubuntu 17.10 VM. The host OS is provisioned using Ansible, and the VM is provisioned using Vagrant/Ansible (with an assumption of VirtualBox powering things underneath).
+
+Step 1: Provisioning the Host OS:
+- Prereqs: Start with a FRESH install of 14.04.
+- Install the low latency kernel
+- Disable CPU frequency scaling
+- Download and install the eNB code using the ansible script enb_playbook.yml.
+
+Step 2: Provisioning the VM
+- Prereqs: install virtualbox, python 2.7, and vagrant
+- Create and provision the VM by running "vagrant up". Look at the Vagrantfile and epc_playbook.yml if you want more understanding as to what's going on.
+- For an all-in-one script, run setup_vm.sh
+
