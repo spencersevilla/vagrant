@@ -1,0 +1,58 @@
+# SMS TODO: CHECK FOR INSTALLATION AND ABORT IF WE ALREADY HAVE THIS INSTALLED
+
+# ---
+# - hosts: all
+
+#   tasks:
+    - name: apt-get update
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      become: yes
+      # become_user: vagrant
+
+    - name: apt-get necessary packages
+      apt:
+        name: "{{ item }}"            
+      with_items:
+      - autoconf
+      - automake
+      - bison
+      - build-essential
+      - cmake
+      - cmake-curses-gui
+      - debhelper
+      - flex
+      - g++
+      - gcc
+      - gdb
+      - libgcrypt-dev
+      - libgnutls28-dev
+      - libidn11-dev
+      - default-libmysqlclient-dev
+      - libpq-dev
+      - libsctp1
+      - libsctp-dev
+      - libxml2-dev
+      - mercurial
+      - python-dev
+      - ssl-cert
+      - swig
+      become: yes
+      # become_user: vagrant
+
+    - name: fetch freeDiameter from my github copy
+      git:
+        repo: https://github.com/spencersevilla/freediameter.git
+        dest: /home/vagrant/freediameter
+
+    - name: build/install freeDiameter 1.2.0
+      shell: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local ../
+        make
+        sudo make install
+
+      args:
+        chdir: /home/vagrant/freediameter
