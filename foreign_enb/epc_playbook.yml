@@ -1,5 +1,5 @@
 ---
-- hosts: epc
+- hosts: localhost
 
 ############################################################################
 ################################## HSS #####################################
@@ -11,7 +11,6 @@
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
     - name: set debconf options for mysql/apache2/phpmyadmin
       shell: |
@@ -57,7 +56,6 @@
       - nettle-dev
       - nettle-bin
       become: yes
-      # become_user: vagrant
 
 # REMOVE NETTLE?!??!!?
 
@@ -74,7 +72,6 @@
       - python-pexpect
       - libapache2-mod-php*
       become: yes
-      # become_user: vagrant
 
 ############################################################################
 ################################## MME #####################################
@@ -127,16 +124,7 @@
     - name: fetch epc from github
       git:
         repo: https://github.com/spencersevilla/enbrains-epc.git
-        dest: /home/vagrant/epc
-
-    # - name: build epc
-    #   shell: |
-    #     source oaienv
-    #     ./scripts/build_hss
-    #     ./scripts/build_mme
-    #     ./scripts/build_spgw
-    #   args:
-    #     chdir: /home/vagrant/epc
+        dest: ~/epc
 
     - name: build epc with enbrains
       shell: |
@@ -145,21 +133,47 @@
         ./scripts/build_mme -e
         ./scripts/build_spgw -e
       args:
-        chdir: /home/vagrant/epc        
+        chdir: ~/epc        
 
     - name: post-install config
       shell: |
-        source /home/vagrant/epc/oaienv
+        source ~/epc/oaienv
         mkdir -p /usr/local/etc/oai
-        cp -rp /home/vagrant/epc/spencer_configs/*.conf /usr/local/etc/oai/
-        cp -rp /home/vagrant/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
-        /home/vagrant/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
-        /home/vagrant/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
-        /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 root research oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
+        cp -rp ~/epc/spencer_configs/*.conf /usr/local/etc/oai/
+        cp -rp ~/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
+        ~/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
+        ~/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
+        ~/epc/scripts/hss_db_import 127.0.0.1 root research oai_db ~/epc/spencer_configs/sample_db.sql
       become: yes
 
+############################################################################
+############################# ENBRAINS #####################################
+############################################################################
 
+    - name: fetch enbrains from github
+      git:
+        repo: https://github.com/spencersevilla/enbrains.git
+        dest: ~/enbrains
 
+    - name: build enbrains
+      shell: make
+      args:
+        chdir: ~/enbrains
 
+    - name: second round of MME apt install
+      apt:
+        name: "libevent-dev"
+      become: yes
 
+    # - name: post-install config
+    #   shell: |
+    #     source ~/epc/oaienv
+    #     mkdir -p /usr/local/etc/oai
+    #     cp -rp ~/epc/spencer_configs/*.conf /usr/local/etc/oai/
+    #     cp -rp ~/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
+    #     ~/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
+    #     ~/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
+    #     ~/epc/scripts/hss_db_import 127.0.0.1 root research oai_db ~/epc/spencer_configs/sample_db.sql
+      # become: yes
 
+      

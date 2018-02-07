@@ -25,20 +25,4 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "enb" do |enb|
-    enb.vm.box = "bento/ubuntu-14.04"
-
-    # (oaisim needs extra memory)
-    enb.vm.provider "virtualbox" do |vb|
-      vb.customize ['modifyvm', :id, '--natnet1', '10.0.100.0/24']
-      vb.memory = 2048
-    end
-
-    enb.vm.network "private_network", ip: "10.0.101.2"
-
-    enb.vm.provision "ansible" do |ansible|
-      ansible.playbook = "enb_playbook.yml"
-    end
-  end
-
 end

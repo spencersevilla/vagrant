@@ -10,7 +10,6 @@
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
     - name: apt-get necessary packages
       apt:
@@ -24,12 +23,11 @@
       - gcc
       - libtool
       become: yes
-      # become_user: vagrant
 
     - name: fetch asn1c rev 1516 patched from my github copy
       git:
         repo: https://github.com/spencersevilla/asn1c.git
-        dest: /home/vagrant/asn1c
+        dest: /home/USER/asn1c
 
     - name: build/install asn1c rev 1516 patched
       shell: |
@@ -37,4 +35,4 @@
         make
         sudo make install
       args:
-        chdir: /home/vagrant/asn1c
+        chdir: /home/USER/asn1c

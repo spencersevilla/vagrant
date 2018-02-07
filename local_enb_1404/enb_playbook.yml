@@ -103,20 +103,20 @@
     - name: fetch enb source from github
       git:
         repo: https://github.com/spencersevilla/openairinterface_clone.git
-        dest: /home/vagrant/enb
+        dest: /home/USER/enb
 
     - name: copy config files from enb_files
       shell: |
-        cp /vagrant/enb_files/ue_eurecom_test_sfr.conf openair3/NAS/TOOLS/ue_eurecom_test_sfr.conf
-        cp /vagrant/enb_files/enb.band7.generic.oaisim.local_mme.conf  targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.generic.oaisim.local_mme.conf
+        cp DIRECTORY/enb_files/ue_eurecom_test_sfr.conf openair3/NAS/TOOLS/ue_eurecom_test_sfr.conf
+        cp DIRECTORY/enb_files/enb.band7.generic.oaisim.local_mme.conf  targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.generic.oaisim.local_mme.conf
       args:
-        chdir: /home/vagrant/enb
+        chdir: /home/USER/enb
 
     - name: build simulated enb (oaisim) (with S1)
       shell: |
         ./cmake_targets/build_oai -c --oaisim --UE
       args:
-        chdir: /home/vagrant/enb
+        chdir: /home/USER/enb
 
 # TO RUN:
 # sudo -E ./cmake_targets/tools/run_enb_ue_virt_s1
