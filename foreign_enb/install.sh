@@ -7,7 +7,9 @@
 # The EPC will be 10.0.101.3
 
 # Step 2: Install prereqs (ansible and python)
+sudo add-apt-repository -y ppa:ansible/ansible-2.4
+sudo apt-get update
 sudo apt-get install -y ansible python2.7
 
 # Step 3: Run Ansible script to do the rest
-ansible-playbook -i "localhost," -c local epc_playbook.yml 
+ansible-playbook -v -i "localhost," -c local epc_playbook.yml 

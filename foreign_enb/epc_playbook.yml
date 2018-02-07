@@ -1,5 +1,5 @@
 ---
-- hosts: epc
+- hosts: localhost
 
 ############################################################################
 ################################## HSS #####################################
@@ -159,6 +159,11 @@
       shell: make
       args:
         chdir: ~/enbrains
+
+    - name: second round of MME apt install
+      apt:
+        name: "libevent-dev"
+      become: yes
 
     # - name: post-install config
     #   shell: |
