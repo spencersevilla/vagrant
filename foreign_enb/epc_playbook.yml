@@ -60,11 +60,11 @@
       - openssl
       - nettle-dev
       - nettle-bin
-      - python-pip
+      - python-mysqldb
       become: yes
 
-    - name: Install pip/MySQL-python
-      pip: name=MySQL-python
+    # - name: Install pip/MySQL-python
+    #   pip: name=MySQL-python
 
     - name: MySQL Configs
       mysql_user:
@@ -167,18 +167,18 @@
 ############################# ENBRAINS #####################################
 ############################################################################
 
-    - name: fetch enbrains from github
+    - name: enbrains - apt-get dependencies
+      apt:
+        name: "libevent-dev"
+      become: yes
+
+    - name: enbrains - fetch from github
       git:
         repo: https://github.com/spencersevilla/enbrains.git
         dest: ~/enbrains
 
-    - name: build enbrains
-      shell: make
-      args:
-        chdir: ~/enbrains
+    - name: enbrains - build
+      make:
+      chdir: ~/enbrains
 
-    - name: second round of MME apt install
-      apt:
-        name: "libevent-dev"
-      become: yes
-      
+
