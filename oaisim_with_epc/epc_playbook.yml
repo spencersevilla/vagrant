@@ -62,11 +62,11 @@
       - openssl
       - nettle-dev
       - nettle-bin
-      - python-pip
+      - python-mysqldb
       become: yes
 
-    - name: Install pip/MySQL-python
-      pip: name=MySQL-python
+    # - name: Install pip/MySQL-python
+    #   pip: name=MySQL-python
 
     - name: MySQL Configs
       mysql_user:
@@ -145,15 +145,6 @@
       git:
         repo: https://github.com/spencersevilla/enbrains-epc.git
         dest: /home/vagrant/epc
-
-    # - name: build epc
-    #   shell: |
-    #     source oaienv
-    #     ./scripts/build_hss
-    #     ./scripts/build_mme
-    #     ./scripts/build_spgw
-    #   args:
-    #     chdir: /home/vagrant/epc
 
     - name: build epc with enbrains
       shell: |
