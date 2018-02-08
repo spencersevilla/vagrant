@@ -4,14 +4,14 @@
 # - hosts: all
 
 #   tasks:
-    - name: apt-get update
+    - name: freeDiameter - apt-get update
       apt:
         update_cache: yes
         cache_valid_time: 3600
       become: yes
       # become_user: vagrant
 
-    - name: apt-get necessary packages
+    - name: freeDiameter - apt-get necessary packages
       apt:
         name: "{{ item }}"            
       with_items:
@@ -41,18 +41,25 @@
       become: yes
       # become_user: vagrant
 
-    - name: fetch freeDiameter from my github copy
+    - name: freeDiameter - clone from my github copy
       git:
         repo: https://github.com/spencersevilla/freediameter.git
         dest: /home/vagrant/freediameter
 
-    - name: build/install freeDiameter 1.2.0
+    - name: freeDiameter - cmake prep
       shell: |
         mkdir build
         cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local ../
-        make
-        sudo make install
-
       args:
         chdir: /home/vagrant/freediameter
+
+    - name: freeDiameter - build
+      make:
+        chdir: /home/vagrant/freediameter
+
+    - name: freeDiameter - install
+      make:
+        chdir: /home/vagrant/freediameter
+        target: install
+      become: yes
