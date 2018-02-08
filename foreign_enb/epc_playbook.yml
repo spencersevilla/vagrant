@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+    mysql_user: epc
+    mysql_password: research
 
 ############################################################################
 ################################## HSS #####################################
@@ -12,15 +14,18 @@
         cache_valid_time: 3600
       become: yes
 
-    - name: set debconf options for mysql/apache2/phpmyadmin
-      shell: |
-        echo 'mysql-server mysql-server/root_password password research' | debconf-set-selections
-        echo 'mysql-server mysql-server/root_password_again password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/app-password-confirm password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/mysql/admin-pass password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/mysql/app-pass password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
+    - name: pre-configure phpmyadmin
+      debconf:
+        name: phpmyadmin 
+        question: "{{ item.name }}"
+        vtype: "{{ item.type }}"
+        value: "{{ item.val }}"
+      with_items:
+        - {name: phpmyadmin/dbconfig-install, type: boolean, val: true}
+        - {name: phpmyadmin/app-password-confirm, type: password, val: {{ mysql_password }}}
+        - {name: phpmyadmin/mysql/admin-pass, type: password, val: {{ mysql_password }}}
+        - {name: phpmyadmin/mysql/app-pass, type: password, val: {{ mysql_password }}}
+        - {name: phpmyadmin/reconfigure-webserver, type: multiselect, val: apache2}
       become: yes
 
     - name: first round of HSS apt install
@@ -55,6 +60,18 @@
       - openssl
       - nettle-dev
       - nettle-bin
+      - python-pip
+      become: yes
+
+    - name: Install pip/MySQL-python
+      pip: name=MySQL-python
+
+    - name: MySQL Configs
+      mysql_user:
+        name: epc
+        password: {{ mysql_password }}
+        host: localhost
+        priv: '*.*:ALL'
       become: yes
 
 # REMOVE NETTLE?!??!!?
@@ -143,7 +160,7 @@
         cp -rp ~/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
         ~/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
         ~/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
-        ~/epc/scripts/hss_db_import 127.0.0.1 root research oai_db ~/epc/spencer_configs/sample_db.sql
+        ~/epc/scripts/hss_db_import 127.0.0.1 {{ mysql_user }} {{ mysql_password }} oai_db ~/epc/spencer_configs/sample_db.sql
       become: yes
 
 ############################################################################
@@ -164,16 +181,4 @@
       apt:
         name: "libevent-dev"
       become: yes
-
-    # - name: post-install config
-    #   shell: |
-    #     source ~/epc/oaienv
-    #     mkdir -p /usr/local/etc/oai
-    #     cp -rp ~/epc/spencer_configs/*.conf /usr/local/etc/oai/
-    #     cp -rp ~/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
-    #     ~/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
-    #     ~/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
-    #     ~/epc/scripts/hss_db_import 127.0.0.1 root research oai_db ~/epc/spencer_configs/sample_db.sql
-      # become: yes
-
       
