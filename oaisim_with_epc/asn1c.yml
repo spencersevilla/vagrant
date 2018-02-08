@@ -5,14 +5,13 @@
 
   # sudo: yes
   # tasks:
-    - name: apt-get update
+    - name: asn1c - apt-get update
       apt:
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
-    - name: apt-get necessary packages
+    - name: asn1c - apt-get necessary packages
       apt:
         name: "{{ item }}"            
       with_items:
@@ -24,17 +23,24 @@
       - gcc
       - libtool
       become: yes
-      # become_user: vagrant
 
-    - name: fetch asn1c rev 1516 patched from my github copy
+    - name: asn1c - fetch rev 1516 patched from my github copy
       git:
         repo: https://github.com/spencersevilla/asn1c.git
-        dest: /home/vagrant/asn1c
+        dest: /home/USER/asn1c
 
-    - name: build/install asn1c rev 1516 patched
+    - name: asn1c - configure
       shell: |
         ./configure
-        make
-        sudo make install
       args:
+        chdir: /home/USER/asn1c
+
+    - name: asn1c - build
+      make:
         chdir: /home/vagrant/asn1c
+
+    - name: asn1c - install
+      make:
+        chdir: /home/vagrant/asn1c
+        target: install
+      become: yes
