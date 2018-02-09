@@ -56,10 +56,10 @@
 
     - name: freeDiameter - build
       make:
-        chdir: /home/vagrant/freediameter
+        chdir: /home/vagrant/freediameter/build
 
     - name: freeDiameter - install
       make:
-        chdir: /home/vagrant/freediameter
+        chdir: /home/vagrant/freediameter/build
         target: install
       become: yes

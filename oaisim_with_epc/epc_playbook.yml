@@ -24,9 +24,9 @@
         value: "{{ item.val }}"
       with_items:
         - {name: phpmyadmin/dbconfig-install, type: boolean, val: true}
-        - {name: phpmyadmin/app-password-confirm, type: password, val: {{ mysql_password }}}
-        - {name: phpmyadmin/mysql/admin-pass, type: password, val: {{ mysql_password }}}
-        - {name: phpmyadmin/mysql/app-pass, type: password, val: {{ mysql_password }}}
+        - {name: phpmyadmin/app-password-confirm, type: password, val: "{{ mysql_password }}"}
+        - {name: phpmyadmin/mysql/admin-pass, type: password, val: "{{ mysql_password }}"}
+        - {name: phpmyadmin/mysql/app-pass, type: password, val: "{{ mysql_password }}"}
         - {name: phpmyadmin/reconfigure-webserver, type: multiselect, val: apache2}
       become: yes
 
@@ -71,7 +71,7 @@
     - name: MySQL Configs
       mysql_user:
         name: epc
-        password: {{ mysql_password }}
+        password: "{{ mysql_password }}"
         host: localhost
         priv: '*.*:ALL'
       become: yes
@@ -163,7 +163,7 @@
         cp -rp /home/vagrant/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
         /home/vagrant/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
         /home/vagrant/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
-        /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 {{ mysql_user }} {{ mysql_password }} oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
+        /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 "{{ mysql_user }}" "{{ mysql_password }}" oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
       become: yes
 
 
