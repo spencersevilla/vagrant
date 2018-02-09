@@ -1,7 +1,13 @@
 ---
 - hosts: localhost
+  vars:
     mysql_user: epc
+    username: uw
     mysql_password: research
+  vars_prompt:
+      - name: mysql_password_unused
+        prompt: "please enter a mysql db password"
+  become_user: uw
 
 ############################################################################
 ################################## HSS #####################################
@@ -63,9 +69,6 @@
       - python-mysqldb
       become: yes
 
-    # - name: Install pip/MySQL-python
-    #   pip: name=MySQL-python
-
     - name: MySQL Configs
       mysql_user:
         name: epc
@@ -73,8 +76,6 @@
         host: localhost
         priv: '*.*:ALL'
       become: yes
-
-# REMOVE NETTLE?!??!!?
 
 # INSTALL FD
     - import_tasks: freediameter.yml

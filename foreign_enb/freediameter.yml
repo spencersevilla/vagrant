@@ -9,7 +9,6 @@
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
     - name: freeDiameter - apt-get necessary packages
       apt:
@@ -39,12 +38,11 @@
       - ssl-cert
       - swig
       become: yes
-      # become_user: vagrant
 
     - name: freeDiameter - clone from my github copy
       git:
         repo: https://github.com/spencersevilla/freediameter.git
-        dest: /home/vagrant/freediameter
+        dest: /home/{{ username }}/freediameter
 
     - name: freeDiameter - cmake prep
       shell: |
@@ -52,14 +50,14 @@
         cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local ../
       args:
-        chdir: /home/vagrant/freediameter
+        chdir: /home/{{ username }}/freediameter
 
     - name: freeDiameter - build
       make:
-        chdir: /home/vagrant/freediameter
+        chdir: /home/{{ username }}/freediameter
 
     - name: freeDiameter - install
       make:
-        chdir: /home/vagrant/freediameter
+        chdir: /home/{{ username }}/freediameter
         target: install
       become: yes

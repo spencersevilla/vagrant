@@ -42,6 +42,6 @@
 
     - name: asn1c - install
       make:
-        chdir: /home/vagrant/asn1c
+        chdir: /home/{{ username }}/asn1c
         target: install
       become: yes

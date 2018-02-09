@@ -2,7 +2,12 @@
 - hosts: epc
   vars:
     mysql_user: epc
+    username: uw    
     mysql_password: research
+  vars_prompt:
+      - name: mysql_password_unused
+        prompt: "please enter a mysql db password"
+  become_user: uw
 
 ############################################################################
 ################################## HSS #####################################
@@ -14,7 +19,6 @@
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
     - name: pre-configure phpmyadmin
       debconf:
@@ -65,9 +69,6 @@
       - python-mysqldb
       become: yes
 
-    # - name: Install pip/MySQL-python
-    #   pip: name=MySQL-python
-
     - name: MySQL Configs
       mysql_user:
         name: epc
@@ -75,8 +76,6 @@
         host: localhost
         priv: '*.*:ALL'
       become: yes
-
-# REMOVE NETTLE?!??!!?
 
 # INSTALL FD
     - import_tasks: freediameter.yml
@@ -91,7 +90,6 @@
       - python-pexpect
       - libapache2-mod-php*
       become: yes
-      # become_user: vagrant
 
 ############################################################################
 ################################## MME #####################################
@@ -166,8 +164,20 @@
         /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 "{{ mysql_user }}" "{{ mysql_password }}" oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
       become: yes
 
+############################################################################
+############################# ENBRAINS #####################################
+############################################################################
 
+    - name: enbrains - apt-get dependencies
+      apt:
+        name: "libevent-dev"
+      become: yes
 
+    - name: enbrains - fetch from github
+      git:
+        repo: https://github.com/spencersevilla/enbrains.git
+        dest: ~/enbrains
 
-
-
+    - name: enbrains - build
+      make:
+      chdir: ~/enbrains
