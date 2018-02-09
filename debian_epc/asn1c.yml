@@ -28,6 +28,7 @@
       git:
         repo: https://github.com/spencersevilla/asn1c.git
         dest: ~/asn1c
+        force: yes
 
     - name: asn1c - configure
       shell: |
