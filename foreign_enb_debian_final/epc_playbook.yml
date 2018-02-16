@@ -55,7 +55,7 @@
       - libgcrypt11-dev
       - libidn2-0-dev
       - libidn11-dev
-      - libmysqlclient-dev
+      - default-libmysqlclient-dev
       - libpthread-stubs0-dev
       - libsctp1
       - libsctp-dev
