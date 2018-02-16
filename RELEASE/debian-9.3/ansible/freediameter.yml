@@ -28,7 +28,7 @@
       - libgcrypt-dev
       - libgnutls28-dev
       - libidn11-dev
-      - libmysqlclient-dev
+      - default-libmysqlclient-dev
       - libpq-dev
       - libsctp1
       - libsctp-dev

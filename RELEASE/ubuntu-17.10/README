@@ -1,3 +1,6 @@
+WARNING: I haven't actually made this work yet. Go use Debian instead!!!
+
+
 THIS system architecture assumes that we're provisioning an all-in-one EPC on a host machine running 17.10 (or, eventually soon, 18.04). The eNB is actually a separate host and connects to the EPC over a ethernet interface. The EPC connects to the Internet over a different interface.
 
 System Configuration:
