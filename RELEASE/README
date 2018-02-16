@@ -11,3 +11,11 @@ Generally speaking, these scripts setup the following configuration:
 - mysql user: enbrain
 - mysql password: correcthorsebatterystaple
 - After installation/reboot, run "/home/enbrain/setup_enbrain.sh" to complete the installation.
+
+
+DEBIAN INSTRUCTIONS:
+- Recommended: take the iso and burn it directly to a bootable USB
+- Not recommended (Long Way):
+1) Get a copy of debian from the release website and burn it to a bootable USB
+2) Take the entire contents of the version folder and put it on the bootable USB's drive under /preseed
+3) Edit the bootloader to load the file "/preseed/ccm.seed". This typically is in /boot/grub/grub.cfg but could be anywhere (syslinux, isolinux, etc).
