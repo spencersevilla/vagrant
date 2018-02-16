@@ -1,0 +1,13 @@
+This directory has somewhat-battle-tested release configurations for the EPC. Currently, we assume the following:
+1) The EPC is all-in-one, and exists on a physical device (i.e. a Zotac box), NOT a VM
+2) The eNB is a completely separate physical/logical component that connects to the EPC via ethernet.
+3) Right now we have only tested a 1-1 relationship between eNB and EPC.
+
+Given these assumptions, choose an OS and follow the instructions given in {OS}/preconfig. Don't worry about {OS}/ansible, those scripts will be copied/installed automatically for you.
+
+Generally speaking, these scripts setup the following configuration:
+- username: enbrain
+- password: password <==== CHANGE THIS!!!
+- mysql user: enbrain
+- mysql password: correcthorsebatterystaple
+- After installation/reboot, run "/home/enbrain/setup_enbrain.sh" to complete the installation.

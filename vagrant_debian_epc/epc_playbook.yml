@@ -1,5 +1,13 @@
 ---
-- hosts: default
+- hosts: epc
+  vars:
+    mysql_user: epc
+    username: enbrain    
+    mysql_password: research
+  vars_prompt:
+      - name: mysql_password_unused
+        prompt: "please enter a mysql db password"
+  become_user: enbrain
 
 ############################################################################
 ################################## HSS #####################################
@@ -11,17 +19,19 @@
         update_cache: yes
         cache_valid_time: 3600
       become: yes
-      # become_user: vagrant
 
-    - name: set debconf options for mysql/apache2/phpmyadmin
-      shell: |
-        echo 'mysql-server mysql-server/root_password password research' | debconf-set-selections
-        echo 'mysql-server mysql-server/root_password_again password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/app-password-confirm password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/mysql/admin-pass password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/mysql/app-pass password research' | debconf-set-selections
-        echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
+    - name: pre-configure phpmyadmin
+      debconf:
+        name: phpmyadmin 
+        question: "{{ item.name }}"
+        vtype: "{{ item.type }}"
+        value: "{{ item.val }}"
+      with_items:
+        - {name: phpmyadmin/dbconfig-install, type: boolean, val: true}
+        - {name: phpmyadmin/app-password-confirm, type: password, val: "{{ mysql_password }}"}
+        - {name: phpmyadmin/mysql/admin-pass, type: password, val: "{{ mysql_password }}"}
+        - {name: phpmyadmin/mysql/app-pass, type: password, val: "{{ mysql_password }}"}
+        - {name: phpmyadmin/reconfigure-webserver, type: multiselect, val: apache2}
       become: yes
 
     - name: first round of HSS apt install
@@ -45,7 +55,7 @@
       - libgcrypt11-dev
       - libidn2-0-dev
       - libidn11-dev
-      - libmysqlclient-dev
+      - default-libmysqlclient-dev
       - libpthread-stubs0-dev
       - libsctp1
       - libsctp-dev
@@ -56,10 +66,16 @@
       - openssl
       - nettle-dev
       - nettle-bin
+      - python-mysqldb
       become: yes
-      # become_user: vagrant
 
-# REMOVE NETTLE?!??!!?
+    - name: MySQL Configs
+      mysql_user:
+        name: epc
+        password: "{{ mysql_password }}"
+        host: localhost
+        priv: '*.*:ALL'
+      become: yes
 
 # INSTALL FD
     - import_tasks: freediameter.yml
@@ -74,7 +90,6 @@
       - python-pexpect
       - libapache2-mod-php*
       become: yes
-      # become_user: vagrant
 
 ############################################################################
 ################################## MME #####################################
@@ -124,21 +139,21 @@
 ################################## EPC #####################################
 ############################################################################
 
-    - name: fetch dolte-epc from github (SMS NOTE, CHANGE THIS TO INCLUDE ENBRAINS EVENTUALLY!!!)
+    - name: fetch epc from github
       git:
-        repo: https://github.com/spencersevilla/dolte-epc.git
+        repo: https://github.com/spencersevilla/enbrains-epc.git
         dest: /home/vagrant/epc
 
-    - name: build dolte-epc
+    - name: build epc with enbrains
       shell: |
         source oaienv
-        ./scripts/build_hss
-        ./scripts/build_mme
-        ./scripts/build_spgw
+        ./scripts/build_hss -e
+        ./scripts/build_mme -e
+        ./scripts/build_spgw -e
       args:
-        chdir: /home/vagrant/epc
+        chdir: /home/vagrant/epc        
 
-    - name: post-install config dolte-epc (TODO MAKE SYMLINKS!!!)
+    - name: post-install config
       shell: |
         source /home/vagrant/epc/oaienv
         mkdir -p /usr/local/etc/oai
@@ -146,11 +161,23 @@
         cp -rp /home/vagrant/epc/spencer_configs/freeDiameter /usr/local/etc/oai/
         /home/vagrant/epc/scripts/check_hss_s6a_certificate /usr/local/etc/oai/freeDiameter hss.OpenAir5G.Alliance
         /home/vagrant/epc/scripts/check_mme_s6a_certificate /usr/local/etc/oai/freeDiameter mme.OpenAir5G.Alliance
-        /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 root research oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
+        /home/vagrant/epc/scripts/hss_db_import 127.0.0.1 "{{ mysql_user }}" "{{ mysql_password }}" oai_db /home/vagrant/epc/spencer_configs/sample_db.sql
       become: yes
 
+############################################################################
+############################# ENBRAINS #####################################
+############################################################################
 
+    - name: enbrains - apt-get dependencies
+      apt:
+        name: "libevent-dev"
+      become: yes
 
+    - name: enbrains - fetch from github
+      git:
+        repo: https://github.com/spencersevilla/enbrains.git
+        dest: ~/enbrains
 
-
-
+    - name: enbrains - build
+      make:
+      chdir: ~/enbrains
