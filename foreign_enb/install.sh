@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Step 0: COMPLAIN if not Ubuntu 17.10!
-
-# Step 1: Create user/password
-source ./adduser.sh
+# Step 0: COMPLAIN if not Debian 9.3?!?
 
 # Step 2: Internet interface:
 # We want the Internet gateway to be XXXX
