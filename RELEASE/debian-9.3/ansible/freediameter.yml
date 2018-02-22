@@ -42,7 +42,7 @@
     - name: freeDiameter - clone from my github copy
       git:
         repo: https://github.com/spencersevilla/freediameter.git
-        dest: /home/{{ username }}/freediameter
+        dest: /home/{{ username }}/packages/freediameter
 
     - name: freeDiameter - cmake prep
       shell: |
@@ -50,14 +50,14 @@
         cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local ../
       args:
-        chdir: /home/{{ username }}/freediameter
+        chdir: /home/{{ username }}/packages/freediameter
 
     - name: freeDiameter - build
       make:
-        chdir: /home/{{ username }}/freediameter/build
+        chdir: /home/{{ username }}/packages/freediameter/build
 
     - name: freeDiameter - install
       make:
-        chdir: /home/{{ username }}/freediameter/build
+        chdir: /home/{{ username }}/packages/freediameter/build
         target: install
       become: yes
